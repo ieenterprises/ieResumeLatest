@@ -1,28 +1,30 @@
 
 import html2pdf from 'html2pdf.js';
 
-interface PDFOptions {
-  filename?: string;
-  margin?: number;
-  imageQuality?: number;
-  pageSize?: string;
-  orientation?: 'portrait' | 'landscape';
-  jsPDF?: any; 
-}
-
 export const generatePDF = async (element: HTMLElement, fileName: string, options: any = {}) => {
   try {
-    // Ensure element has a class for PDF-specific styling
-    element.classList.add('pdf-generation');
-
+    // Create a clone of the element to avoid modifying the original
+    const clone = element.cloneNode(true) as HTMLElement;
+    document.body.appendChild(clone);
+    
+    // Add PDF generation class to the clone
+    clone.classList.add('pdf-generation');
+    clone.style.width = '210mm'; // A4 width
+    clone.style.minHeight = '297mm'; // A4 height
+    clone.style.padding = '15mm';
+    clone.style.backgroundColor = 'white';
+    clone.style.position = 'absolute';
+    clone.style.left = '-9999px';
+    
     // Default options
     const defaultOptions = {
-      margin: [15, 15, 15, 15], // [top, right, bottom, left] in mm
+      margin: [10, 10, 10, 10], // [top, right, bottom, left] in mm
       filename: fileName,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { 
         scale: 2,
         useCORS: true,
+        logging: true,
         letterRendering: true,
         allowTaint: true
       },
@@ -41,20 +43,19 @@ export const generatePDF = async (element: HTMLElement, fileName: string, option
       ...options,
     };
 
-    // Generate PDF
-    const pdf = await html2pdf()
+    // Generate PDF from the clone
+    await html2pdf()
+      .from(clone)
       .set(mergedOptions)
-      .from(element)
       .save();
 
-    // Remove PDF generation class
-    element.classList.remove('pdf-generation');
-
+    // Clean up - remove the clone after generation
+    document.body.removeChild(clone);
+    
     console.log('PDF generated successfully');
-    return pdf;
+    return true;
   } catch (error) {
     console.error('Error in PDF generation:', error);
-    element.classList.remove('pdf-generation');
     throw error;
   }
 };

@@ -23,24 +23,32 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const downloadResume = async () => {
     if (resumeRef.current) {
       try {
-        // Add a class to ensure proper styling during PDF generation
-        resumeRef.current.classList.add("pdf-generation");
-
+        console.log("Starting PDF generation...");
         const fileName = `${personalInfo.name || "resume"}.pdf`;
-        await generatePDF(resumeRef.current, fileName, {
-          margin: 0.5,
-          pageSize: { width: '8.5in', height: '11in' }, // Corrected page size
-          orientation: 'portrait',
-          imageQuality: 1.0,
-          pagebreak: { 
-            mode: ['avoid-all', 'css', 'legacy'],
-            before: '.page-break-before',
-            after: '.page-break-after'
+        
+        // Allow some time for rendering to complete
+        setTimeout(async () => {
+          try {
+            await generatePDF(resumeRef.current, fileName, {
+              margin: 10,
+              filename: fileName,
+              image: { type: 'jpeg', quality: 1 },
+              html2canvas: { 
+                scale: 2,
+                useCORS: true,
+                logging: true
+              },
+              jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait'
+              }
+            });
+          } catch (innerError) {
+            console.error("Error in PDF generation timeout:", innerError);
+            alert("There was an error generating your PDF. Please try again.");
           }
-        });
-
-        // Remove the class after PDF generation
-        resumeRef.current.classList.remove("pdf-generation");
+        }, 100);
       } catch (error) {
         console.error("Error generating PDF:", error);
         alert("There was an error generating your PDF. Please try again.");
