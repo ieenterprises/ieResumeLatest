@@ -207,13 +207,13 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 function getTemplateStyles(template: string): string {
   switch (template) {
     case "modern":
-      return "bg-gray-50 font-sans";
+      return "bg-gray-50 font-sans print:overflow-visible";
     case "creative":
-      return "bg-purple-50 font-serif";
+      return "bg-purple-50 font-serif print:overflow-visible";
     case "simple":
-      return "bg-white font-mono";
+      return "bg-white font-mono print:overflow-visible";
     case "professional":
     default:
-      return "bg-white font-sans";
+      return "bg-white font-sans print:overflow-visible";
   }
 }

@@ -3,41 +3,24 @@
 @tailwind utilities;
 
 @media print {
-  /* Reset all break rules first to allow proper flow */
+  /* Force all content to flow continuously without breaks */
   * {
-    break-inside: auto;
-    page-break-inside: auto;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    page-break-before: auto !important;
+    break-before: auto !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
-  /* Target specific elements that should never break */
-  .experience-item {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* Keep headers with their content */
-  h2 {
-    break-after: avoid !important;
-    page-break-after: avoid !important;
-    margin-top: 0.5cm !important;
-  }
-
-  /* Ensure position and company stay together */
-  .position-header {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* Don't break inside a resume entry item */
-  .entry-item {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* Allow natural flow between pages while keeping related content together */
-  .experience-item + .experience-item {
-    page-break-before: auto;
-    break-before: auto;
+  /* Ensure smooth flow between all elements */
+  .experience-item,
+  .position-header,
+  .entry-item,
+  h1, h2, h3, h4, h5, h6,
+  div, p, section {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
   }
 
   /* Setup generous page margins */
@@ -63,25 +46,18 @@
   box-shadow: none !important;
 }
 
-/* Apply page break avoidance only to specific elements that shouldn't break */
+/* Allow all content to flow naturally */
+.pdf-generation div,
+.pdf-generation section,
 .pdf-generation h1,
+.pdf-generation h2,
 .pdf-generation h3,
 .pdf-generation .experience-item,
 .pdf-generation .education-item {
-  page-break-inside: avoid !important;
-  break-inside: avoid !important;
-}
-
-/* Allow section headers to appear on same page as content */
-.pdf-generation h2 {
-  page-break-after: avoid !important;
-  break-after: avoid !important;
-}
-
-/* Allow regular divs and sections to break across pages */
-.pdf-generation .mb-4,
-.pdf-generation .mb-5,
-.pdf-generation .mb-6 {
+  page-break-inside: auto !important;
+  break-inside: auto !important;
+  page-break-before: auto !important;
+  break-before: auto !important;
   page-break-after: auto !important;
   break-after: auto !important;
 }
@@ -110,11 +86,6 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
-  }
-
-  * {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
   }
 }
 
