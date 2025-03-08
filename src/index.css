@@ -3,31 +3,34 @@
 @tailwind utilities;
 
 @media print {
+  /* Keep each experience item intact */
   .experience-item {
     break-inside: avoid;
     page-break-inside: avoid;
   }
   
+  /* Keep section headers with their content */
   h2 {
     break-after: avoid;
     page-break-after: avoid;
   }
   
-  /* Keep sections together */
-  .mb-4, .mb-5 {
-    break-inside: auto !important;
-    page-break-inside: auto !important;
+  /* Preserve section integrity */
+  .resume-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
   
-  /* Remove forced page breaks between sections */
-  h2, h3 {
-    break-before: auto !important;
-    page-break-before: auto !important;
+  /* Allow natural flow between pages but keep related content together */
+  .work-experience-section .experience-item + .experience-item {
+    page-break-before: auto;
+    break-before: auto;
   }
   
-  /* Allow content to flow naturally between pages */
+  /* Setup basic page margins */
   @page {
     margin: 0.5cm;
+    size: letter portrait;
   }
 }
 
