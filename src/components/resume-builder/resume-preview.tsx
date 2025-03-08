@@ -21,25 +21,26 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const resumeRef = useRef<HTMLDivElement>(null);
 
   const downloadResume = async () => {
-    if (resumeRef.current) {
-      try {
-        // Add a class to ensure proper styling during PDF generation
-        resumeRef.current.classList.add("pdf-generation");
-
-        const fileName = `${personalInfo.name || "resume"}.pdf`;
-        await generatePDF(resumeRef.current, fileName, {
-          margin: 0.5,
-          pageSize: 'letter',
-          orientation: 'portrait',
-          imageQuality: 1.0
-        });
-
-        // Remove the class after PDF generation
-        resumeRef.current.classList.remove("pdf-generation");
-      } catch (error) {
-        console.error("Error generating PDF:", error);
-        alert("There was an error generating your PDF. Please try again.");
-      }
+    if (!resumeRef.current) {
+      alert("Resume content not ready. Please try again.");
+      return;
+    }
+    
+    try {
+      const fileName = `${personalInfo.name || "resume"}.pdf`;
+      
+      // The class is now managed in the generatePDF function
+      await generatePDF(resumeRef.current, fileName, {
+        margin: 0.5,
+        pageSize: 'letter',
+        orientation: 'portrait',
+        imageQuality: 1.0
+      });
+      
+      console.log("PDF generated successfully");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("There was an error generating your PDF. Please try again or check console for details.");
     }
   };
 

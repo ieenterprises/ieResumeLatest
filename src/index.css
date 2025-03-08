@@ -6,16 +6,19 @@
 .pdf-generation {
   background-color: white !important;
   color: black !important;
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
-  padding: 20px !important;
+  font-size: 10pt !important;
+  line-height: 1.3 !important;
+  padding: 15px !important;
   border: none !important;
+  max-width: 8.5in !important;
+  margin: 0 auto !important;
 }
 
 /* Remove borders from all elements in PDF */
 .pdf-generation * {
-  border: none !important;
+  border-color: #ddd !important;
   box-shadow: none !important;
+  overflow: visible !important;
 }
 
 /* Improve page break control */
@@ -23,19 +26,22 @@
 .pdf-generation h3 {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
+  margin-bottom: 8pt !important;
 }
 
 /* Make section headers stay with at least some of their content */
 .pdf-generation h2 {
   page-break-after: avoid !important;
   break-after: avoid !important;
-  margin-bottom: 2pt !important;
+  margin-bottom: 4pt !important;
+  padding-bottom: 2pt !important;
 }
 
 /* Allow section containers to flow across pages when needed */
 .pdf-generation .section-container {
   page-break-inside: auto !important;
   break-inside: auto !important;
+  margin-bottom: 8pt !important;
 }
 
 /* Individual items within sections should avoid breaking */
@@ -43,7 +49,14 @@
 .pdf-generation .education-item {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
-  margin-bottom: 10pt !important;
+  margin-bottom: 8pt !important;
+  padding-bottom: 4pt !important;
+}
+
+/* Reduce spacing to fit more content */
+.pdf-generation p {
+  margin-bottom: 4pt !important;
+  line-height: 1.3 !important;
 }
 
 .pdf-generation h1 {
