@@ -29,9 +29,14 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         const fileName = `${personalInfo.name || "resume"}.pdf`;
         await generatePDF(resumeRef.current, fileName, {
           margin: 0.5,
-          pageSize: 'letter',
+          pageSize: { width: '8.5in', height: '11in' }, // Corrected page size
           orientation: 'portrait',
-          imageQuality: 1.0
+          imageQuality: 1.0,
+          pagebreak: { 
+            mode: ['avoid-all', 'css', 'legacy'],
+            before: '.page-break-before',
+            after: '.page-break-after'
+          }
         });
 
         // Remove the class after PDF generation
@@ -109,7 +114,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <div
                 key={index}
                 className="mb-3 experience-item"
-                style={{ pageBreakInside: "avoid" }} //added
+                style={{ pageBreakInside: "avoid" }}
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
@@ -141,7 +146,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <div
                 key={index}
                 className="mb-3"
-                style={{ pageBreakInside: "avoid" }} //added
+                style={{ pageBreakInside: "avoid" }}
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
@@ -187,7 +192,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <div
                 key={index}
                 className="mb-4"
-                style={{ pageBreakInside: "avoid" }} //added
+                style={{ pageBreakInside: "avoid" }}
               >
                 <h2 className="text-base font-semibold border-b pb-1 mb-1">
                   {section.title}

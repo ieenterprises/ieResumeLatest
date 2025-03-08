@@ -15,28 +15,40 @@
 /* Apply page break avoidance to specific elements */
 .pdf-generation h1,
 .pdf-generation h2,
-.pdf-generation h3,
+.pdf-generation h3 {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
 .pdf-generation .experience-item,
 .pdf-generation .education-item {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
+  margin-bottom: 15px !important;
+}
+
+/* Improve section spacing */
+.pdf-generation .section {
+  margin-bottom: 20px !important;
 }
 
 /* Keep the professional summary and work experience heading together */
 .pdf-generation .summary-section {
   page-break-after: avoid !important;
   break-after: avoid !important;
+  margin-bottom: 20px !important;
 }
 
-.pdf-generation .work-experience-section h2 {
-  page-break-before: avoid !important;
-  break-before: avoid !important;
-}
-
-/* Keep related content together */
+/* Allow work experience section to start on a new page if needed */
 .pdf-generation .work-experience-section {
   page-break-before: auto !important;
   break-before: auto !important;
+}
+
+/* Make section headers stay with at least some content */
+.pdf-generation .section-header {
+  page-break-after: avoid !important;
+  break-after: avoid !important;
 }
 
 /* Allow regular divs and sections to break across pages when necessary */

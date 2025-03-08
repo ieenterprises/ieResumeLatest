@@ -1,3 +1,4 @@
+
 import html2pdf from 'html2pdf.js';
 
 interface PDFOptions {
@@ -27,7 +28,7 @@ export const generatePDF = async (element: HTMLElement, fileName: string, option
       },
       jsPDF: { 
         unit: 'mm', 
-        format: 'letter', 
+        format: 'a4', 
         orientation: 'portrait',
         compress: true
       },
