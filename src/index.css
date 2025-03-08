@@ -18,27 +18,32 @@
   box-shadow: none !important;
 }
 
-/* Apply page break avoidance only to specific elements that shouldn't break */
+/* Improve page break control */
 .pdf-generation h1,
-.pdf-generation h3,
-.pdf-generation .experience-item,
-.pdf-generation .education-item {
+.pdf-generation h3 {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
 }
 
-/* Allow section headers to appear on same page as content */
+/* Make section headers stay with at least some of their content */
 .pdf-generation h2 {
   page-break-after: avoid !important;
   break-after: avoid !important;
+  margin-bottom: 2pt !important;
 }
 
-/* Allow regular divs and sections to break across pages */
-.pdf-generation .mb-4,
-.pdf-generation .mb-5,
-.pdf-generation .mb-6 {
-  page-break-after: auto !important;
-  break-after: auto !important;
+/* Allow section containers to flow across pages when needed */
+.pdf-generation .section-container {
+  page-break-inside: auto !important;
+  break-inside: auto !important;
+}
+
+/* Individual items within sections should avoid breaking */
+.pdf-generation .experience-item,
+.pdf-generation .education-item {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+  margin-bottom: 10pt !important;
 }
 
 .pdf-generation h1 {

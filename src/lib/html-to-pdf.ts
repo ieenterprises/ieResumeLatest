@@ -2,36 +2,51 @@ import html2pdf from 'html2pdf.js';
 
 interface PDFOptions {
   filename?: string;
-  margin?: number;
+  margin?: number | number[];
   imageQuality?: number;
   pageSize?: string;
   orientation?: 'portrait' | 'landscape';
-  jsPDF?: any; // Added to accommodate jsPDF options
+  jsPDF?: any; 
 }
 
-export async function generatePDF(element: HTMLElement, filename: string = 'document.pdf', options: Partial<PDFOptions> = {}) {
-  // Add a class to the element before generating PDF to apply special styles
-  element.classList.add('pdf-generation');
-  
-  const opt = {
-    margin: options.margin || 0.5,
-    filename: filename,
-    image: { type: 'jpeg', quality: options.imageQuality || 0.98 },
+export const generatePDF = async (element: HTMLElement, fileName: string, options: any = {}) => {
+  const html2pdf = (await import('html2pdf.js')).default;
+
+  const defaultOptions = {
+    margin: [0.5, 0.5, 0.5, 0.5], 
+    filename: fileName,
+    image: { type: 'jpeg', quality: 0.98 },
+    enableLinks: true,
     html2canvas: { 
       scale: 2, 
-      useCORS: true, 
+      useCORS: true,
       logging: false,
-      removeContainer: true,
-      backgroundColor: null
+      letterRendering: true
     },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
     jsPDF: { 
       unit: 'in', 
-      format: options.pageSize || 'letter', 
-      orientation: options.orientation || 'portrait',
-      ...options.jsPDF // Apply additional jsPDF options if provided
+      format: 'letter', 
+      orientation: 'portrait',
+      compress: true,
+      hotfixes: ["px_scaling"]
     }
   };
 
-  return html2pdf().set(opt).from(element).save();
-}
+  const originalStyles = window.getComputedStyle(element);
+  const originalPadding = element.style.padding;
+
+  element.style.padding = "10mm";
+  element.style.maxWidth = "210mm";
+  element.style.fontSize = "10pt";
+
+  const mergedOptions = { ...defaultOptions, ...options };
+
+  try {
+    await html2pdf().from(element).set(mergedOptions).save();
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    // Handle the error appropriately, e.g., display an error message to the user.
+  } finally {
+    element.style.padding = originalPadding;
+  }
+};
