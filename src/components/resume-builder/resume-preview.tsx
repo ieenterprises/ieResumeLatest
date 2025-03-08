@@ -110,10 +110,9 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
             {experiences.map((exp: any, index: number) => (
               <div
                 key={index}
-                className="mb-3 experience-item"
-                style={{ pageBreakInside: "avoid", breakInside: "avoid-page" }}
+                className="mb-3 experience-item entry-item"
               >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start position-header">
                   <h3 className="text-sm font-medium">
                     {exp.position || "Position"}
                   </h3>
@@ -125,8 +124,8 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 <p className="text-xs font-medium">
                   {exp.company || "Company"}
                 </p>
-                <p className="text-xs mt-0.5 leading-normal">
-                  {exp.description || "Job description"}
+                <p className="text-xs whitespace-pre-line">
+                  {exp.description || ""}
                 </p>
               </div>
             ))}

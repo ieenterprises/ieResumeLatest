@@ -3,33 +3,46 @@
 @tailwind utilities;
 
 @media print {
-  /* Keep each experience item intact */
+  /* Reset all break rules first to allow proper flow */
+  * {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  /* Target specific elements that should never break */
   .experience-item {
-    break-inside: avoid;
-    page-break-inside: avoid;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
-  
-  /* Keep section headers with their content */
+
+  /* Keep headers with their content */
   h2 {
-    break-after: avoid;
-    page-break-after: avoid;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    margin-top: 0.5cm !important;
   }
-  
-  /* Preserve section integrity */
-  .resume-section {
-    break-inside: avoid;
-    page-break-inside: avoid;
+
+  /* Ensure position and company stay together */
+  .position-header {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
-  
-  /* Allow natural flow between pages but keep related content together */
-  .work-experience-section .experience-item + .experience-item {
+
+  /* Don't break inside a resume entry item */
+  .entry-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Allow natural flow between pages while keeping related content together */
+  .experience-item + .experience-item {
     page-break-before: auto;
     break-before: auto;
   }
-  
-  /* Setup basic page margins */
+
+  /* Setup generous page margins */
   @page {
-    margin: 0.5cm;
+    margin: 1cm;
     size: letter portrait;
   }
 }
