@@ -22,32 +22,19 @@ export function CoverLetterPreview({
   const downloadCoverLetter = async () => {
     if (coverLetterRef.current) {
       try {
-        console.log("Starting cover letter PDF generation...");
+        // Add a class to ensure proper styling during PDF generation
+        coverLetterRef.current.classList.add("pdf-generation");
+
         const fileName = `${personalInfo.name || "cover-letter"}_${jobDetails.company || "company"}.pdf`;
-        
-        // Allow some time for rendering to complete
-        setTimeout(async () => {
-          try {
-            await generatePDF(coverLetterRef.current, fileName, {
-              margin: 10,
-              filename: fileName,
-              image: { type: 'jpeg', quality: 1 },
-              html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                logging: true
-              },
-              jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait'
-              }
-            });
-          } catch (innerError) {
-            console.error("Error in PDF generation timeout:", innerError);
-            alert("There was an error generating your PDF. Please try again.");
-          }
-        }, 100);
+        await generatePDF(coverLetterRef.current, fileName, {
+          margin: 0.5,
+          pageSize: 'letter',
+          orientation: 'portrait',
+          imageQuality: 1.0
+        });
+
+        // Remove the class after PDF generation
+        coverLetterRef.current.classList.remove("pdf-generation");
       } catch (error) {
         console.error("Error generating PDF:", error);
         alert("There was an error generating your PDF. Please try again.");

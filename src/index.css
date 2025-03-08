@@ -9,54 +9,36 @@
   font-size: 12pt !important;
   line-height: 1.5 !important;
   padding: 20px !important;
-  max-width: 100% !important;
+  border: none !important;
 }
 
-/* Apply page break avoidance to specific elements */
+/* Remove borders from all elements in PDF */
+.pdf-generation * {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Apply page break avoidance only to specific elements that shouldn't break */
 .pdf-generation h1,
-.pdf-generation h2,
-.pdf-generation h3 {
-  page-break-inside: avoid !important;
-  break-inside: avoid !important;
-}
-
+.pdf-generation h3,
 .pdf-generation .experience-item,
 .pdf-generation .education-item {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
-  margin-bottom: 15px !important;
 }
 
-/* Improve section spacing */
-.pdf-generation .section {
-  margin-bottom: 20px !important;
-}
-
-/* Keep the professional summary and work experience heading together */
-.pdf-generation .summary-section {
-  page-break-after: avoid !important;
-  break-after: avoid !important;
-  margin-bottom: 20px !important;
-}
-
-/* Allow work experience section to start on a new page if needed */
-.pdf-generation .work-experience-section {
-  page-break-before: auto !important;
-  break-before: auto !important;
-}
-
-/* Make section headers stay with at least some content */
-.pdf-generation .section-header {
+/* Allow section headers to appear on same page as content */
+.pdf-generation h2 {
   page-break-after: avoid !important;
   break-after: avoid !important;
 }
 
-/* Allow regular divs and sections to break across pages when necessary */
+/* Allow regular divs and sections to break across pages */
 .pdf-generation .mb-4,
 .pdf-generation .mb-5,
 .pdf-generation .mb-6 {
-  page-break-inside: auto !important;
-  break-inside: auto !important;
+  page-break-after: auto !important;
+  break-after: auto !important;
 }
 
 .pdf-generation h1 {
