@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PlusCircle, Trash2, Wand2 } from "lucide-react";
+import { PlusCircle, Trash2, Wand2, Upload, X } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ResumeFormProps {
   setResumeData: (data: any) => void;
@@ -34,6 +35,7 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
     phone: "",
     address: "",
     summary: "",
+    photo: "",
   });
 
   const [experiences, setExperiences] = useState([
@@ -47,6 +49,7 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
   const [skills, setSkills] = useState([""]);
   const [customSections, setCustomSections] = useState<CustomSection[]>([]);
   const [template, setTemplate] = useState("professional");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePersonalInfoChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -135,6 +138,45 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
       updatedCustomSections,
       template,
     );
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const photoUrl = reader.result as string;
+        setPersonalInfo((prev) => ({ ...prev, photo: photoUrl }));
+        updateResumeData(
+          { ...personalInfo, photo: photoUrl },
+          experiences,
+          education,
+          skills,
+          customSections,
+          template,
+        );
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const removePhoto = () => {
+    setPersonalInfo((prev) => ({ ...prev, photo: "" }));
+    updateResumeData(
+      { ...personalInfo, photo: "" },
+      experiences,
+      education,
+      skills,
+      customSections,
+      template,
+    );
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const addExperience = () => {
@@ -284,6 +326,52 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
           <AccordionTrigger>Personal Information</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4">
+              <div className="flex justify-center mb-4">
+                <div className="relative">
+                  <Avatar className="w-24 h-24 border-2 border-gray-200">
+                    <AvatarImage src={personalInfo.photo} alt="Profile" />
+                    <AvatarFallback className="text-lg">
+                      {personalInfo.name
+                        ? personalInfo.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()
+                        : "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handlePhotoUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <div className="flex gap-2 mt-2 justify-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={triggerFileInput}
+                    >
+                      <Upload className="h-4 w-4 mr-1" />
+                      Upload
+                    </Button>
+                    {personalInfo.photo && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removePhoto}
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        Remove
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>

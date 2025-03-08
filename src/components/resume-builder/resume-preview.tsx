@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRef } from "react";
 import { generatePDF } from "@/lib/pdf-generator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ResumePreviewProps {
   resumeData: any;
@@ -45,14 +46,34 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         className={`p-6 border rounded-md ${getTemplateStyles(template)}`}
       >
         {/* Header / Personal Info */}
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold mb-2">
-            {personalInfo.name || "Your Name"}
-          </h1>
-          <div className="text-sm space-y-1">
-            {personalInfo.email && <p>{personalInfo.email}</p>}
-            {personalInfo.phone && <p>{personalInfo.phone}</p>}
-            {personalInfo.address && <p>{personalInfo.address}</p>}
+        <div className="mb-6">
+          <div className="flex items-center gap-4">
+            {personalInfo.photo && (
+              <Avatar className="w-20 h-20 border">
+                <AvatarImage src={personalInfo.photo} alt="Profile" />
+                <AvatarFallback className="text-lg">
+                  {personalInfo.name
+                    ? personalInfo.name
+                        .split(" ")
+                        .map((n: string) => n[0])
+                        .join("")
+                        .toUpperCase()
+                    : "U"}
+                </AvatarFallback>
+              </Avatar>
+            )}
+            <div
+              className={personalInfo.photo ? "flex-1" : "text-center w-full"}
+            >
+              <h1 className="text-2xl font-bold mb-2">
+                {personalInfo.name || "Your Name"}
+              </h1>
+              <div className="text-sm space-y-1">
+                {personalInfo.email && <p>{personalInfo.email}</p>}
+                {personalInfo.phone && <p>{personalInfo.phone}</p>}
+                {personalInfo.address && <p>{personalInfo.address}</p>}
+              </div>
+            </div>
           </div>
         </div>
 
