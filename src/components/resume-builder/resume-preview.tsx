@@ -25,18 +25,17 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
       alert("Resume content not ready. Please try again.");
       return;
     }
-    
+
     try {
       const fileName = `${personalInfo.name || "resume"}.pdf`;
-      
-      // The class is now managed in the generatePDF function
+
       await generatePDF(resumeRef.current, fileName, {
         margin: 0.5,
-        pageSize: 'letter',
+        pageSize: { format: 'Letter' }, // Corrected pageSize
         orientation: 'portrait',
         imageQuality: 1.0
       });
-      
+
       console.log("PDF generated successfully");
     } catch (error) {
       console.error("Error generating PDF:", error);

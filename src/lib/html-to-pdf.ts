@@ -1,5 +1,4 @@
 
-// Import the library directly, not dynamically
 import html2pdf from 'html2pdf.js';
 
 interface PDFOptions {
@@ -26,11 +25,6 @@ export const generatePDF = async (element: HTMLElement, fileName: string, option
       element.classList.add('pdf-generation');
     }
 
-    // Apply some additional styling for better PDF generation
-    element.style.padding = "10mm";
-    element.style.maxWidth = "210mm";
-    element.style.fontSize = "10pt";
-
     // Default options with better values for PDF generation
     const defaultOptions = {
       margin: [0.5, 0.5, 0.5, 0.5],
@@ -40,28 +34,29 @@ export const generatePDF = async (element: HTMLElement, fileName: string, option
       html2canvas: { 
         scale: 2, 
         useCORS: true,
-        logging: true,
-        letterRendering: true,
-        allowTaint: true
+        logging: false,
+        letterRendering: true
       },
       jsPDF: { 
         unit: 'in', 
-        format: 'letter', 
+        format: [8.5, 11], // Letter size in inches
         orientation: 'portrait',
-        compress: true,
-        hotfixes: ["px_scaling"]
-      },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        compress: true
+      }
     };
 
-    // Merge options
-    const mergedOptions = { ...defaultOptions, ...options };
+    // Apply some specific styling for better PDF generation
+    element.style.padding = "10mm";
+    element.style.width = "210mm";
+    element.style.maxWidth = "210mm";
+    element.style.margin = "0 auto";
+    element.style.fontSize = "10pt";
 
-    // Use promise-based approach
+    // Return a promise for better handling
     return new Promise((resolve, reject) => {
       html2pdf()
         .from(element)
-        .set(mergedOptions)
+        .set(defaultOptions)
         .save()
         .then(() => {
           console.log('PDF generated successfully');
@@ -70,18 +65,16 @@ export const generatePDF = async (element: HTMLElement, fileName: string, option
         .catch((error) => {
           console.error('Error in PDF generation:', error);
           reject(error);
+        })
+        .finally(() => {
+          // Restore original styling
+          element.style.padding = originalPadding;
         });
     });
   } catch (error) {
     console.error("Error setting up PDF generation:", error);
-    throw error;
-  } finally {
     // Restore original styling
     element.style.padding = originalPadding;
-    
-    // Remove class if we added it
-    if (!element.classList.contains('pdf-generation')) {
-      element.classList.remove('pdf-generation');
-    }
+    throw error;
   }
 };
