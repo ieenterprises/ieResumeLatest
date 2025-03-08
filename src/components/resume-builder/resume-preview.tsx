@@ -108,8 +108,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
             {experiences.map((exp: any, index: number) => (
               <div
                 key={index}
-                className="mb-3"
-                style={{ breakInside: "avoid" }}
+                className="mb-3 experience-item"
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
