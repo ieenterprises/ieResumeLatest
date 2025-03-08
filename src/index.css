@@ -11,13 +11,22 @@
   padding: 20px !important;
 }
 
-.pdf-generation .mb-4,
-.pdf-generation .mb-5,
-.pdf-generation .mb-6,
-.pdf-generation section,
-.pdf-generation div {
+/* Apply page break avoidance only to specific elements that shouldn't break */
+.pdf-generation h1,
+.pdf-generation h2,
+.pdf-generation h3,
+.pdf-generation .experience-item,
+.pdf-generation .education-item {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
+}
+
+/* Allow regular divs and sections to break across pages */
+.pdf-generation .mb-4,
+.pdf-generation .mb-5,
+.pdf-generation .mb-6 {
+  page-break-after: auto !important;
+  break-after: auto !important;
 }
 
 .pdf-generation h1 {

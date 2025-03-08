@@ -1,4 +1,3 @@
-
 import html2pdf from 'html2pdf.js';
 
 interface PDFOptions {
@@ -7,6 +6,7 @@ interface PDFOptions {
   imageQuality?: number;
   pageSize?: string;
   orientation?: 'portrait' | 'landscape';
+  jsPDF?: any; // Added to accommodate jsPDF options
 }
 
 export async function generatePDF(element: HTMLElement, filename: string = 'document.pdf', options: Partial<PDFOptions> = {}) {
@@ -18,7 +18,8 @@ export async function generatePDF(element: HTMLElement, filename: string = 'docu
     jsPDF: { 
       unit: 'in', 
       format: options.pageSize || 'letter', 
-      orientation: options.orientation || 'portrait' 
+      orientation: options.orientation || 'portrait',
+      ...options.jsPDF // Apply additional jsPDF options if provided
     }
   };
 
