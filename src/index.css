@@ -12,6 +12,23 @@
     break-after: avoid;
     page-break-after: avoid;
   }
+  
+  /* Keep sections together */
+  .mb-4, .mb-5 {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  
+  /* Remove forced page breaks between sections */
+  h2, h3 {
+    break-before: auto !important;
+    page-break-before: auto !important;
+  }
+  
+  /* Allow content to flow naturally between pages */
+  @page {
+    margin: 0.5cm;
+  }
 }
 
 /* PDF generation styles */
