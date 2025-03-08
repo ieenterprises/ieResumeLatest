@@ -31,7 +31,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
       await generatePDF(resumeRef.current, fileName, {
         margin: 0.5,
-        pageSize: { format: 'Letter' }, // Corrected pageSize
+        pageSize: { format: 'Letter' },
         orientation: 'portrait',
         imageQuality: 1.0
       });
@@ -111,11 +111,11 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 className="experience-item"
                 style={{ marginBottom: "10pt" }}
               >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start flex-wrap">
                   <h3 className="text-sm font-medium">
                     {exp.position || "Position"}
                   </h3>
-                  <span className="text-xs">
+                  <span className="text-xs whitespace-nowrap">
                     {exp.startDate || "Start Date"} -{" "}
                     {exp.endDate || "End Date"}
                   </span>
@@ -143,11 +143,11 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 className="mb-3"
                 style={{ breakInside: "avoid" }}
               >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start flex-wrap">
                   <h3 className="text-sm font-medium">
                     {edu.institution || "Institution"}
                   </h3>
-                  <span className="text-xs">
+                  <span className="text-xs whitespace-nowrap">
                     {edu.graduationDate || "Graduation Date"}
                   </span>
                 </div>

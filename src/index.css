@@ -59,6 +59,15 @@
   line-height: 1.3 !important;
 }
 
+/* Ensure date fields don't get cut off in PDF */
+.pdf-generation .whitespace-nowrap {
+  white-space: nowrap !important;
+}
+
+.pdf-generation .flex-wrap {
+  flex-wrap: wrap !important;
+}
+
 .pdf-generation h1 {
   font-size: 24pt !important;
   margin-bottom: 16pt !important;
