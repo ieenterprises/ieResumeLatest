@@ -91,7 +91,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Summary */}
         {personalInfo.summary && (
-          <div className="mb-4" style={{ breakInside: "avoid" }}>
+          <div className="mb-2" style={{ breakInside: "avoid", pageBreakAfter: "avoid" }}>
             <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Professional Summary
             </h2>
@@ -101,7 +101,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Experience */}
         {experiences.length > 0 && (
-          <div className="mb-4" style={{ breakInside: "avoid" }}>
+          <div className="mb-4" style={{ breakInside: "auto" }}>
             <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Work Experience
             </h2>

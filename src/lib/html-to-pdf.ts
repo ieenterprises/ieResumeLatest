@@ -24,6 +24,7 @@ export async function generatePDF(element: HTMLElement, filename: string = 'docu
       removeContainer: true,
       backgroundColor: null
     },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
     jsPDF: { 
       unit: 'in', 
       format: options.pageSize || 'letter', 
