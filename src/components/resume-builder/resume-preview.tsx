@@ -21,25 +21,25 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const resumeRef = useRef<HTMLDivElement>(null);
 
   const downloadResume = async () => {
-    if (!resumeRef.current) {
-      alert("Resume content not ready. Please try again.");
-      return;
-    }
+    if (resumeRef.current) {
+      try {
+        // Add a class to ensure proper styling during PDF generation
+        resumeRef.current.classList.add("pdf-generation");
 
-    try {
-      const fileName = `${personalInfo.name || "resume"}.pdf`;
+        const fileName = `${personalInfo.name || "resume"}.pdf`;
+        await generatePDF(resumeRef.current, fileName, {
+          margin: 0.5,
+          pageSize: 'letter',
+          orientation: 'portrait',
+          imageQuality: 1.0
+        });
 
-      await generatePDF(resumeRef.current, fileName, {
-        margin: 0.5,
-        pageSize: { format: 'Letter' }, // Corrected pageSize
-        orientation: 'portrait',
-        imageQuality: 1.0
-      });
-
-      console.log("PDF generated successfully");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("There was an error generating your PDF. Please try again or check console for details.");
+        // Remove the class after PDF generation
+        resumeRef.current.classList.remove("pdf-generation");
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        alert("There was an error generating your PDF. Please try again.");
+      }
     }
   };
 
@@ -91,7 +91,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Summary */}
         {personalInfo.summary && (
-          <div className="mb-2">
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
             <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Professional Summary
             </h2>
@@ -101,15 +101,14 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Experience */}
         {experiences.length > 0 && (
-          <div className="section-container">
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
             <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Work Experience
             </h2>
             {experiences.map((exp: any, index: number) => (
               <div
                 key={index}
-                className="experience-item"
-                style={{ marginBottom: "10pt" }}
+                className="mb-3 experience-item"
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
