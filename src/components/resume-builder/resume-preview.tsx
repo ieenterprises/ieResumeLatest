@@ -101,14 +101,15 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Experience */}
         {experiences.length > 0 && (
-          <div className="mb-4" style={{ breakInside: "auto" }}>
-            <h2 className="text-base font-semibold border-b pb-1 mb-1">
+          <div className="mb-4">
+            <h2 className="text-base font-semibold border-b pb-1 mb-1" style={{ breakAfter: "avoid" }}>
               Work Experience
             </h2>
             {experiences.map((exp: any, index: number) => (
               <div
                 key={index}
                 className="mb-3 experience-item"
+                style={{ pageBreakInside: "avoid", breakInside: "avoid-page" }}
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
