@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRef } from "react";
-import { generatePDF } from "@/lib/pdf-generator";
+import { generatePDF } from "@/lib/html-to-pdf";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ResumePreviewProps {
@@ -27,7 +27,12 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         resumeRef.current.classList.add("pdf-generation");
 
         const fileName = `${personalInfo.name || "resume"}.pdf`;
-        await generatePDF(resumeRef.current, fileName);
+        await generatePDF(resumeRef.current, fileName, {
+          margin: 0.5,
+          pageSize: 'letter',
+          orientation: 'portrait',
+          imageQuality: 1.0
+        });
 
         // Remove the class after PDF generation
         resumeRef.current.classList.remove("pdf-generation");
