@@ -23,8 +23,14 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const downloadResume = async () => {
     if (resumeRef.current) {
       try {
+        // Add a class to ensure proper styling during PDF generation
+        resumeRef.current.classList.add("pdf-generation");
+
         const fileName = `${personalInfo.name || "resume"}.pdf`;
         await generatePDF(resumeRef.current, fileName);
+
+        // Remove the class after PDF generation
+        resumeRef.current.classList.remove("pdf-generation");
       } catch (error) {
         console.error("Error generating PDF:", error);
         alert("There was an error generating your PDF. Please try again.");
@@ -44,14 +50,15 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
       <div
         ref={resumeRef}
         className={`p-6 border rounded-md ${getTemplateStyles(template)}`}
+        style={{ maxWidth: "100%", margin: "0 auto" }}
       >
         {/* Header / Personal Info */}
-        <div className="mb-6">
+        <div className="mb-5" style={{ breakInside: "avoid" }}>
           <div className="flex items-center gap-4">
             {personalInfo.photo && (
-              <Avatar className="w-20 h-20 border">
+              <Avatar className="w-16 h-16 border">
                 <AvatarImage src={personalInfo.photo} alt="Profile" />
-                <AvatarFallback className="text-lg">
+                <AvatarFallback className="text-base">
                   {personalInfo.name
                     ? personalInfo.name
                         .split(" ")
@@ -65,10 +72,10 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
             <div
               className={personalInfo.photo ? "flex-1" : "text-center w-full"}
             >
-              <h1 className="text-2xl font-bold mb-2">
+              <h1 className="text-xl font-bold mb-1">
                 {personalInfo.name || "Your Name"}
               </h1>
-              <div className="text-sm space-y-1">
+              <div className="text-xs space-y-0.5">
                 {personalInfo.email && <p>{personalInfo.email}</p>}
                 {personalInfo.phone && <p>{personalInfo.phone}</p>}
                 {personalInfo.address && <p>{personalInfo.address}</p>}
@@ -79,33 +86,39 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Summary */}
         {personalInfo.summary && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b pb-1 mb-2">
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
+            <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Professional Summary
             </h2>
-            <p className="text-sm">{personalInfo.summary}</p>
+            <p className="text-xs leading-normal">{personalInfo.summary}</p>
           </div>
         )}
 
         {/* Experience */}
         {experiences.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b pb-1 mb-2">
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
+            <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Work Experience
             </h2>
             {experiences.map((exp: any, index: number) => (
-              <div key={index} className="mb-4">
+              <div
+                key={index}
+                className="mb-3"
+                style={{ breakInside: "avoid" }}
+              >
                 <div className="flex justify-between items-start">
-                  <h3 className="font-medium">{exp.position || "Position"}</h3>
-                  <span className="text-sm">
+                  <h3 className="text-sm font-medium">
+                    {exp.position || "Position"}
+                  </h3>
+                  <span className="text-xs">
                     {exp.startDate || "Start Date"} -{" "}
                     {exp.endDate || "End Date"}
                   </span>
                 </div>
-                <p className="text-sm font-medium">
+                <p className="text-xs font-medium">
                   {exp.company || "Company"}
                 </p>
-                <p className="text-sm mt-1">
+                <p className="text-xs mt-0.5 leading-normal">
                   {exp.description || "Job description"}
                 </p>
               </div>
@@ -115,21 +128,25 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Education */}
         {education.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b pb-1 mb-2">
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
+            <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Education
             </h2>
             {education.map((edu: any, index: number) => (
-              <div key={index} className="mb-4">
+              <div
+                key={index}
+                className="mb-3"
+                style={{ breakInside: "avoid" }}
+              >
                 <div className="flex justify-between items-start">
-                  <h3 className="font-medium">
+                  <h3 className="text-sm font-medium">
                     {edu.institution || "Institution"}
                   </h3>
-                  <span className="text-sm">
+                  <span className="text-xs">
                     {edu.graduationDate || "Graduation Date"}
                   </span>
                 </div>
-                <p className="text-sm">
+                <p className="text-xs">
                   {edu.degree || "Degree"}
                   {edu.field ? `, ${edu.field}` : ""}
                   {edu.gpa ? ` - GPA: ${edu.gpa}` : ""}
@@ -141,13 +158,15 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Skills */}
         {skills.length > 0 && skills[0] !== "" && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold border-b pb-1 mb-2">Skills</h2>
-            <div className="flex flex-wrap gap-2">
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
+            <h2 className="text-base font-semibold border-b pb-1 mb-1">
+              Skills
+            </h2>
+            <div className="flex flex-wrap gap-1.5">
               {skills.map((skill: string, index: number) => (
                 <span
                   key={index}
-                  className="text-sm bg-gray-100 px-2 py-1 rounded"
+                  className="text-xs bg-gray-100 px-2 py-0.5 rounded"
                 >
                   {skill}
                 </span>
@@ -160,11 +179,17 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         {customSections.length > 0 &&
           customSections.map((section: any, index: number) =>
             section.title && section.content ? (
-              <div key={index} className="mb-6">
-                <h2 className="text-lg font-semibold border-b pb-1 mb-2">
+              <div
+                key={index}
+                className="mb-4"
+                style={{ breakInside: "avoid" }}
+              >
+                <h2 className="text-base font-semibold border-b pb-1 mb-1">
                   {section.title}
                 </h2>
-                <p className="text-sm whitespace-pre-line">{section.content}</p>
+                <p className="text-xs whitespace-pre-line leading-normal">
+                  {section.content}
+                </p>
               </div>
             ) : null,
           )}
