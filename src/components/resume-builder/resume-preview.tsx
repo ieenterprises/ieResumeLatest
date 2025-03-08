@@ -109,6 +109,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <div
                 key={index}
                 className="mb-3 experience-item"
+                style={{ pageBreakInside: "avoid" }} //added
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
@@ -140,7 +141,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <div
                 key={index}
                 className="mb-3"
-                style={{ breakInside: "avoid" }}
+                style={{ pageBreakInside: "avoid" }} //added
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
@@ -186,7 +187,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <div
                 key={index}
                 className="mb-4"
-                style={{ breakInside: "avoid" }}
+                style={{ pageBreakInside: "avoid" }} //added
               >
                 <h2 className="text-base font-semibold border-b pb-1 mb-1">
                   {section.title}

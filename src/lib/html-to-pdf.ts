@@ -6,22 +6,54 @@ interface PDFOptions {
   imageQuality?: number;
   pageSize?: string;
   orientation?: 'portrait' | 'landscape';
-  jsPDF?: any; // Added to accommodate jsPDF options
+  jsPDF?: any; 
 }
 
-export async function generatePDF(element: HTMLElement, filename: string = 'document.pdf', options: Partial<PDFOptions> = {}) {
-  const opt = {
-    margin: options.margin || 0.5,
-    filename: filename,
-    image: { type: 'jpeg', quality: options.imageQuality || 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
-    jsPDF: { 
-      unit: 'in', 
-      format: options.pageSize || 'letter', 
-      orientation: options.orientation || 'portrait',
-      ...options.jsPDF // Apply additional jsPDF options if provided
-    }
-  };
+export const generatePDF = async (element: HTMLElement, fileName: string, options: any = {}) => {
+  try {
+    // Ensure element has a class for PDF-specific styling
+    element.classList.add('pdf-generation');
 
-  return html2pdf().set(opt).from(element).save();
-}
+    // Default options
+    const defaultOptions = {
+      margin: [15, 15, 15, 15], // [top, right, bottom, left] in mm
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+        allowTaint: true
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'letter', 
+        orientation: 'portrait',
+        compress: true
+      },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    // Merge with custom options
+    const mergedOptions = {
+      ...defaultOptions,
+      ...options,
+    };
+
+    // Generate PDF
+    const pdf = await html2pdf()
+      .set(mergedOptions)
+      .from(element)
+      .save();
+
+    // Remove PDF generation class
+    element.classList.remove('pdf-generation');
+
+    console.log('PDF generated successfully');
+    return pdf;
+  } catch (error) {
+    console.error('Error in PDF generation:', error);
+    element.classList.remove('pdf-generation');
+    throw error;
+  }
+};
