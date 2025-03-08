@@ -9,6 +9,13 @@
   font-size: 12pt !important;
   line-height: 1.5 !important;
   padding: 20px !important;
+  border: none !important;
+}
+
+/* Remove borders from all elements in PDF */
+.pdf-generation * {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Apply page break avoidance only to specific elements that shouldn't break */

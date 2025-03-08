@@ -10,11 +10,20 @@ interface PDFOptions {
 }
 
 export async function generatePDF(element: HTMLElement, filename: string = 'document.pdf', options: Partial<PDFOptions> = {}) {
+  // Add a class to the element before generating PDF to apply special styles
+  element.classList.add('pdf-generation');
+  
   const opt = {
     margin: options.margin || 0.5,
     filename: filename,
     image: { type: 'jpeg', quality: options.imageQuality || 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
+    html2canvas: { 
+      scale: 2, 
+      useCORS: true, 
+      logging: false,
+      removeContainer: true,
+      backgroundColor: null
+    },
     jsPDF: { 
       unit: 'in', 
       format: options.pageSize || 'letter', 
