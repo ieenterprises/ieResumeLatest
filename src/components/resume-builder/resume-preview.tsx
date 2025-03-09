@@ -86,25 +86,27 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
         {/* Summary */}
         {personalInfo.summary && (
-          <div className="mb-4 resume-section" style={{ breakInside: "avoid" }}>
+          <div className="mb-4" style={{ breakInside: "avoid" }}>
             <h2 className="text-base font-semibold border-b pb-1 mb-1">
               Professional Summary
             </h2>
-            <p className="text-xs whitespace-pre-line leading-normal">
-              {personalInfo.summary}
-            </p>
+            <p className="text-xs leading-normal">{personalInfo.summary}</p>
           </div>
         )}
 
         {/* Experience */}
-        {experiences.length > 0 && (
-          <div className="mb-4 work-experience-section resume-section">
-            <h2 className="text-base font-semibold border-b pb-1 mb-1">
-              Work Experience
-            </h2>
-            {experiences.map((exp: any, index: number) => (
-              <div key={index} className="mb-3 experience-item entry-item">
-                <div className="flex justify-between items-start position-header">
+        <div className="mb-4" style={{ breakInside: "avoid" }}>
+          <h2 className="text-base font-semibold border-b pb-1 mb-1">
+            Work Experience
+          </h2>
+          {experiences.length > 0 ? (
+            experiences.map((exp: any, index: number) => (
+              <div
+                key={index}
+                className="mb-3"
+                style={{ breakInside: "avoid" }}
+              >
+                <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
                     {exp.position || "Position"}
                   </h3>
@@ -116,21 +118,31 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 <p className="text-xs font-medium">
                   {exp.company || "Company"}
                 </p>
-                <p className="text-xs whitespace-pre-line">
-                  {exp.description || ""}
+                <p className="text-xs mt-0.5 leading-normal">
+                  {exp.description || "Job description"}
                 </p>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <p className="text-xs italic">No work experience added</p>
+          )}
+        </div>
 
-        {/* Education */}
-        {education.length > 0 && (
-          <div className="mb-4 resume-section">
-            <h2 className="text-base font-semibold border-b pb-1 mb-1">
-              Education
-            </h2>
-            {education.map((edu: any, index: number) => (
+        {/* Education - Ensure this section stays together */}
+        <div
+          className="mb-4"
+          style={{
+            breakInside: "avoid",
+            pageBreakInside: "avoid",
+            pageBreakBefore: "auto",
+            pageBreakAfter: "auto",
+          }}
+        >
+          <h2 className="text-base font-semibold border-b pb-1 mb-1">
+            Education
+          </h2>
+          {education.length > 0 ? (
+            education.map((edu: any, index: number) => (
               <div
                 key={index}
                 className="mb-3"
@@ -150,16 +162,24 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                   {edu.gpa ? ` - GPA: ${edu.gpa}` : ""}
                 </p>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <p className="text-xs italic">No education added</p>
+          )}
+        </div>
 
         {/* Skills */}
-        {skills.length > 0 && skills[0] !== "" && (
-          <div className="mb-4 resume-section" style={{ breakInside: "avoid" }}>
-            <h2 className="text-base font-semibold border-b pb-1 mb-1">
-              Skills
-            </h2>
+        <div
+          className="mb-4"
+          style={{
+            breakInside: "avoid",
+            pageBreakInside: "avoid",
+            pageBreakBefore: "auto",
+            pageBreakAfter: "auto",
+          }}
+        >
+          <h2 className="text-base font-semibold border-b pb-1 mb-1">Skills</h2>
+          {skills.length > 0 && skills[0] !== "" ? (
             <div className="flex flex-wrap gap-1.5">
               {skills.map((skill: string, index: number) => (
                 <span
@@ -170,17 +190,24 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 </span>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-xs italic">No skills added</p>
+          )}
+        </div>
 
-        {/* Custom Sections */}
+        {/* Custom Sections - Ensure these stay together */}
         {customSections.length > 0 &&
           customSections.map((section: any, index: number) =>
             section.title && section.content ? (
               <div
                 key={index}
-                className="mb-4 resume-section"
-                style={{ breakInside: "avoid" }}
+                className="mb-4"
+                style={{
+                  breakInside: "avoid",
+                  pageBreakInside: "avoid",
+                  pageBreakBefore: "auto",
+                  pageBreakAfter: "auto",
+                }}
               >
                 <h2 className="text-base font-semibold border-b pb-1 mb-1">
                   {section.title}
@@ -191,6 +218,22 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               </div>
             ) : null,
           )}
+
+        {/* References Section - Always keep together */}
+        <div
+          className="mb-4"
+          style={{
+            breakInside: "avoid",
+            pageBreakInside: "avoid",
+            pageBreakBefore: "auto",
+            pageBreakAfter: "auto",
+          }}
+        >
+          <h2 className="text-base font-semibold border-b pb-1 mb-1">
+            References
+          </h2>
+          <p className="text-xs italic">Available upon request</p>
+        </div>
       </div>
     </div>
   );
@@ -199,13 +242,13 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 function getTemplateStyles(template: string): string {
   switch (template) {
     case "modern":
-      return "bg-gray-50 font-sans print:overflow-visible";
+      return "bg-gray-50 font-sans";
     case "creative":
-      return "bg-purple-50 font-serif print:overflow-visible";
+      return "bg-purple-50 font-serif";
     case "simple":
-      return "bg-white font-mono print:overflow-visible";
+      return "bg-white font-mono";
     case "professional":
     default:
-      return "bg-white font-sans print:overflow-visible";
+      return "bg-white font-sans";
   }
 }

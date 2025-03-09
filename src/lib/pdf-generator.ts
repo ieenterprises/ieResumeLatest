@@ -30,6 +30,20 @@ export async function generatePDF(
       (section as HTMLElement).style.marginBottom = "15px";
     });
 
+    // Special handling for references/education sections to prevent them from being cut
+    const educationSections = clonedElement.querySelectorAll(
+      'h2:contains("Education"), h2:contains("References")',
+    );
+    educationSections.forEach((section) => {
+      const parentSection = section.closest("div");
+      if (parentSection) {
+        (parentSection as HTMLElement).style.pageBreakInside = "avoid";
+        (parentSection as HTMLElement).style.breakInside = "avoid";
+        (parentSection as HTMLElement).style.pageBreakBefore = "auto";
+        (parentSection as HTMLElement).style.pageBreakAfter = "auto";
+      }
+    });
+
     // Create a canvas from the cloned element
     const canvas = await html2canvas(clonedElement, {
       scale: 2, // Higher scale for better quality

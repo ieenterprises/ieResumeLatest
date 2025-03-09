@@ -17,8 +17,15 @@
   .experience-item,
   .position-header,
   .entry-item,
-  h1, h2, h3, h4, h5, h6,
-  div, p, section {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  div,
+  p,
+  section {
     page-break-inside: auto !important;
     break-inside: auto !important;
   }
@@ -31,54 +38,24 @@
 }
 
 /* PDF generation styles */
-.pdf-generation {
-  background-color: white !important;
-  color: black !important;
-  font-size: 12pt !important;
-  line-height: 1.5 !important;
-  padding: 20px !important;
-  border: none !important;
+.pdf-generation .mb-4,
+.pdf-generation .mb-5,
+.pdf-generation .mb-6 {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
-/* Remove borders from all elements in PDF */
-.pdf-generation * {
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* Allow all content to flow naturally */
-.pdf-generation div,
-.pdf-generation section,
-.pdf-generation h1,
+/* Ensure sections with headings stay together */
 .pdf-generation h2,
-.pdf-generation h3,
-.pdf-generation .experience-item,
-.pdf-generation .education-item {
-  page-break-inside: auto !important;
-  break-inside: auto !important;
-  page-break-before: auto !important;
-  break-before: auto !important;
-  page-break-after: auto !important;
-  break-after: auto !important;
-}
-
-.pdf-generation h1 {
-  font-size: 24pt !important;
-  margin-bottom: 16pt !important;
-}
-
-.pdf-generation h2 {
-  font-size: 18pt !important;
-  margin-bottom: 12pt !important;
-}
-
 .pdf-generation h3 {
-  font-size: 14pt !important;
-  margin-bottom: 10pt !important;
+  page-break-after: avoid !important;
+  break-after: avoid !important;
 }
 
+/* Prevent orphans and widows */
 .pdf-generation p {
-  margin-bottom: 8pt !important;
+  orphans: 3 !important;
+  widows: 3 !important;
 }
 
 @media print {
