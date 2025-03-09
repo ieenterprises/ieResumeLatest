@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRef } from "react";
-import { generatePDF } from "@/lib/html-to-pdf";
+import { generatePDF } from "@/lib/pdf-generator";
 
 interface CoverLetterPreviewProps {
   coverLetterData: any;
@@ -26,12 +26,7 @@ export function CoverLetterPreview({
         coverLetterRef.current.classList.add("pdf-generation");
 
         const fileName = `${personalInfo.name || "cover-letter"}_${jobDetails.company || "company"}.pdf`;
-        await generatePDF(coverLetterRef.current, fileName, {
-          margin: 0.5,
-          pageSize: 'letter',
-          orientation: 'portrait',
-          imageQuality: 1.0
-        });
+        await generatePDF(coverLetterRef.current, fileName);
 
         // Remove the class after PDF generation
         coverLetterRef.current.classList.remove("pdf-generation");

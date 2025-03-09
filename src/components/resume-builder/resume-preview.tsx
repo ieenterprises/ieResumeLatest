@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useRef } from "react";
-import { generatePDF } from "@/lib/html-to-pdf";
+import { generatePDF } from "@/lib/pdf-generator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ResumePreviewProps {
@@ -27,12 +27,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         resumeRef.current.classList.add("pdf-generation");
 
         const fileName = `${personalInfo.name || "resume"}.pdf`;
-        await generatePDF(resumeRef.current, fileName, {
-          margin: 0.5,
-          pageSize: 'letter',
-          orientation: 'portrait',
-          imageQuality: 1.0
-        });
+        await generatePDF(resumeRef.current, fileName);
 
         // Remove the class after PDF generation
         resumeRef.current.classList.remove("pdf-generation");
@@ -108,10 +103,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               Work Experience
             </h2>
             {experiences.map((exp: any, index: number) => (
-              <div
-                key={index}
-                className="mb-3 experience-item entry-item"
-              >
+              <div key={index} className="mb-3 experience-item entry-item">
                 <div className="flex justify-between items-start position-header">
                   <h3 className="text-sm font-medium">
                     {exp.position || "Position"}
