@@ -37,6 +37,8 @@ interface CustomSection {
 export function ResumeForm({ setResumeData }: ResumeFormProps) {
   const [personalInfo, setPersonalInfo] = useState({
     name: "",
+    title: "",
+    dob: "",
     email: "",
     phone: "",
     address: "",
@@ -387,6 +389,29 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
                     value={personalInfo.name}
                     onChange={handlePersonalInfoChange}
                     placeholder="John Doe"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="title">Professional Title</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    value={personalInfo.title || ""}
+                    onChange={handlePersonalInfoChange}
+                    placeholder="Software Engineer"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Date of Birth</Label>
+                  <Input
+                    id="dob"
+                    name="dob"
+                    type="date"
+                    value={personalInfo.dob || ""}
+                    onChange={handlePersonalInfoChange}
+                    placeholder="MM/DD/YYYY"
                   />
                 </div>
 

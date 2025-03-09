@@ -69,6 +69,9 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               <h1 className="text-xl font-bold mb-1">
                 {personalInfo.name || "Your Name"}
               </h1>
+              {personalInfo.title && (
+                <p className="text-sm mb-1">{personalInfo.title}</p>
+              )}
               <div className="text-xs space-y-0.5">
                 {personalInfo.email && <p>{personalInfo.email}</p>}
                 {personalInfo.phone && <p>{personalInfo.phone}</p>}
