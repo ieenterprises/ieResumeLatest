@@ -22,14 +22,8 @@ export function CoverLetterPreview({
   const downloadCoverLetter = async () => {
     if (coverLetterRef.current) {
       try {
-        // Add a class to ensure proper styling during PDF generation
-        coverLetterRef.current.classList.add("pdf-generation");
-
         const fileName = `${personalInfo.name || "cover-letter"}_${jobDetails.company || "company"}.pdf`;
         await generatePDF(coverLetterRef.current, fileName);
-
-        // Remove the class after PDF generation
-        coverLetterRef.current.classList.remove("pdf-generation");
       } catch (error) {
         console.error("Error generating PDF:", error);
         alert("There was an error generating your PDF. Please try again.");
@@ -54,7 +48,7 @@ export function CoverLetterPreview({
 
       <div
         ref={coverLetterRef}
-        className={`p-6 border rounded-md ${getTemplateStyles(template)}`}
+        className={`p-6 ${getTemplateStyles(template)}`}
         style={{ maxWidth: "100%", margin: "0 auto", breakInside: "avoid" }}
       >
         {/* Header / Personal Info */}
@@ -98,20 +92,32 @@ export function CoverLetterPreview({
             {letterContent.greeting || "Dear Hiring Manager,"}
           </p>
 
-          <p className="text-xs leading-normal">
-            {letterContent.introduction ||
-              `I am writing to express my interest in the ${jobDetails.position || "[Position]"} role at ${jobDetails.company || "[Company]"}. I was excited to see this opportunity as my skills and experience align well with the requirements of this position.`}
-          </p>
+          <p
+            className="text-xs leading-normal"
+            dangerouslySetInnerHTML={{
+              __html:
+                letterContent.introduction ||
+                `I am writing to express my interest in the ${jobDetails.position || "[Position]"} role at ${jobDetails.company || "[Company]"}. I was excited to see this opportunity as my skills and experience align well with the requirements of this position.`,
+            }}
+          ></p>
 
-          <p className="text-xs leading-normal">
-            {letterContent.body ||
-              "With my background in [relevant field] and experience in [relevant skills], I am confident that I can make valuable contributions to your team. In my previous role at [Previous Company], I successfully [achievement or responsibility relevant to the job]."}
-          </p>
+          <p
+            className="text-xs leading-normal"
+            dangerouslySetInnerHTML={{
+              __html:
+                letterContent.body ||
+                "With my background in [relevant field] and experience in [relevant skills], I am confident that I can make valuable contributions to your team. In my previous role at [Previous Company], I successfully [achievement or responsibility relevant to the job].",
+            }}
+          ></p>
 
-          <p className="text-xs leading-normal">
-            {letterContent.conclusion ||
-              "Thank you for considering my application. I look forward to the opportunity to discuss how I can contribute to your team and would welcome the chance to elaborate on my qualifications in an interview."}
-          </p>
+          <p
+            className="text-xs leading-normal"
+            dangerouslySetInnerHTML={{
+              __html:
+                letterContent.conclusion ||
+                "Thank you for considering my application. I look forward to the opportunity to discuss how I can contribute to your team and would welcome the chance to elaborate on my qualifications in an interview.",
+            }}
+          ></p>
 
           <div className="mt-4">
             <p className="text-xs">{letterContent.signature || "Sincerely,"}</p>

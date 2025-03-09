@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import {
+  generateCoverLetterIntroduction,
+  generateCoverLetterBody,
+  generateCoverLetterConclusion,
+} from "@/lib/gemini-ai";
 import {
   Select,
   SelectContent,
@@ -257,37 +263,149 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
 
                 <div className="space-y-2">
                   <Label htmlFor="introduction">Introduction</Label>
-                  <Textarea
-                    id="introduction"
-                    name="introduction"
+                  <RichTextEditor
                     value={letterContent.introduction}
-                    onChange={handleLetterContentChange}
+                    onChange={(value) => {
+                      setLetterContent((prev) => ({
+                        ...prev,
+                        introduction: value,
+                      }));
+                      updateCoverLetterData(
+                        personalInfo,
+                        jobDetails,
+                        { ...letterContent, introduction: value },
+                        template,
+                      );
+                    }}
                     placeholder="I am writing to express my interest in the [Position] role at [Company]."
                     rows={3}
+                    onAiSuggestion={async () => {
+                      try {
+                        const position = jobDetails.position || "[Position]";
+                        const company = jobDetails.company || "[Company]";
+                        const experience =
+                          "5+ years of relevant experience in the field";
+
+                        const aiContent = await generateCoverLetterIntroduction(
+                          position,
+                          company,
+                          experience,
+                        );
+
+                        setLetterContent((prev) => ({
+                          ...prev,
+                          introduction: aiContent,
+                        }));
+                        updateCoverLetterData(
+                          personalInfo,
+                          jobDetails,
+                          { ...letterContent, introduction: aiContent },
+                          template,
+                        );
+                      } catch (error) {
+                        console.error("Error generating AI content:", error);
+                        alert(
+                          "Failed to generate AI content. Please try again.",
+                        );
+                      }
+                    }}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="body">Body</Label>
-                  <Textarea
-                    id="body"
-                    name="body"
+                  <RichTextEditor
                     value={letterContent.body}
-                    onChange={handleLetterContentChange}
+                    onChange={(value) => {
+                      setLetterContent((prev) => ({ ...prev, body: value }));
+                      updateCoverLetterData(
+                        personalInfo,
+                        jobDetails,
+                        { ...letterContent, body: value },
+                        template,
+                      );
+                    }}
                     placeholder="Describe your relevant experience and why you're a good fit for the position."
                     rows={6}
+                    onAiSuggestion={async () => {
+                      try {
+                        const position = jobDetails.position || "[Position]";
+                        const skills =
+                          "communication, teamwork, problem-solving, leadership";
+                        const achievements =
+                          "increased team productivity by 20%, successfully completed projects under budget";
+
+                        const aiContent = await generateCoverLetterBody(
+                          position,
+                          skills,
+                          achievements,
+                        );
+
+                        setLetterContent((prev) => ({
+                          ...prev,
+                          body: aiContent,
+                        }));
+                        updateCoverLetterData(
+                          personalInfo,
+                          jobDetails,
+                          { ...letterContent, body: aiContent },
+                          template,
+                        );
+                      } catch (error) {
+                        console.error("Error generating AI content:", error);
+                        alert(
+                          "Failed to generate AI content. Please try again.",
+                        );
+                      }
+                    }}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="conclusion">Conclusion</Label>
-                  <Textarea
-                    id="conclusion"
-                    name="conclusion"
+                  <RichTextEditor
                     value={letterContent.conclusion}
-                    onChange={handleLetterContentChange}
+                    onChange={(value) => {
+                      setLetterContent((prev) => ({
+                        ...prev,
+                        conclusion: value,
+                      }));
+                      updateCoverLetterData(
+                        personalInfo,
+                        jobDetails,
+                        { ...letterContent, conclusion: value },
+                        template,
+                      );
+                    }}
                     placeholder="Thank you for considering my application. I look forward to the opportunity to discuss how I can contribute to your team."
                     rows={3}
+                    onAiSuggestion={async () => {
+                      try {
+                        const position = jobDetails.position || "[Position]";
+                        const company = jobDetails.company || "[Company]";
+
+                        const aiContent = await generateCoverLetterConclusion(
+                          company,
+                          position,
+                        );
+
+                        setLetterContent((prev) => ({
+                          ...prev,
+                          conclusion: aiContent,
+                        }));
+                        updateCoverLetterData(
+                          personalInfo,
+                          jobDetails,
+                          { ...letterContent, conclusion: aiContent },
+                          template,
+                        );
+                      } catch (error) {
+                        console.error("Error generating AI content:", error);
+                        alert(
+                          "Failed to generate AI content. Please try again.",
+                        );
+                      }
+                    }}
                   />
                 </div>
 
@@ -306,16 +424,6 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      <div className="pt-4">
-        <Button
-          onClick={generateAIContent}
-          className="w-full bg-purple-600 hover:bg-purple-700"
-        >
-          <Wand2 className="h-4 w-4 mr-2" />
-          Generate AI Content
-        </Button>
-      </div>
     </div>
   );
 }

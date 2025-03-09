@@ -23,14 +23,8 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const downloadResume = async () => {
     if (resumeRef.current) {
       try {
-        // Add a class to ensure proper styling during PDF generation
-        resumeRef.current.classList.add("pdf-generation");
-
         const fileName = `${personalInfo.name || "resume"}.pdf`;
         await generatePDF(resumeRef.current, fileName);
-
-        // Remove the class after PDF generation
-        resumeRef.current.classList.remove("pdf-generation");
       } catch (error) {
         console.error("Error generating PDF:", error);
         alert("There was an error generating your PDF. Please try again.");
@@ -49,8 +43,8 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
       <div
         ref={resumeRef}
-        className={`p-6 border rounded-md ${getTemplateStyles(template)}`}
-        style={{ maxWidth: "100%", margin: "0 auto" }}
+        className={`p-6 ${getTemplateStyles(template)}`}
+        style={{ maxWidth: "100%", margin: "0 auto", lineHeight: "1.6" }}
       >
         {/* Header / Personal Info */}
         <div className="mb-5" style={{ breakInside: "avoid" }}>
@@ -84,70 +78,67 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
           </div>
         </div>
 
-        {/* Summary */}
-        {personalInfo.summary && (
-          <div className="mb-4" style={{ breakInside: "avoid" }}>
-            <h2 className="text-base font-semibold border-b pb-1 mb-1">
-              Professional Summary
-            </h2>
-            <p className="text-xs leading-normal">{personalInfo.summary}</p>
-          </div>
-        )}
-
-        {/* Experience */}
-        <div className="mb-4" style={{ breakInside: "avoid" }}>
-          <h2 className="text-base font-semibold border-b pb-1 mb-1">
-            Work Experience
-          </h2>
-          {experiences.length > 0 ? (
-            experiences.map((exp: any, index: number) => (
-              <div
-                key={index}
-                className="mb-3"
-                style={{ breakInside: "avoid" }}
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="text-sm font-medium">
-                    {exp.position || "Position"}
-                  </h3>
-                  <span className="text-xs">
-                    {exp.startDate || "Start Date"} -{" "}
-                    {exp.endDate || "End Date"}
-                  </span>
-                </div>
-                <p className="text-xs font-medium">
-                  {exp.company || "Company"}
-                </p>
-                <p className="text-xs mt-0.5 leading-normal">
-                  {exp.description || "Job description"}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-xs italic">No work experience added</p>
+        {/* Professional Summary and Work Experience kept together */}
+        <div className="keep-together">
+          {/* Professional Summary */}
+          {personalInfo.summary && (
+            <div className="mb-4">
+              <h2 className="text-base font-semibold border-b pb-1 mb-1">
+                Professional Summary
+              </h2>
+              <p
+                className="text-xs leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: personalInfo.summary }}
+              ></p>
+            </div>
           )}
+
+          {/* Experience section */}
+          <div className="mb-4">
+            <h2 className="text-base font-semibold border-b pb-1 mb-1">
+              Work Experience
+            </h2>
+            {experiences.length > 0 ? (
+              experiences.map((exp: any, index: number) => (
+                <div
+                  key={index}
+                  className="mb-3"
+                  style={{ breakInside: "avoid" }}
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-sm font-medium">
+                      {exp.position || "Position"}
+                    </h3>
+                    <span className="text-xs">
+                      {exp.startDate || "Start Date"} -{" "}
+                      {exp.endDate || "End Date"}
+                    </span>
+                  </div>
+                  <p className="text-xs font-medium">
+                    {exp.company || "Company"}
+                  </p>
+                  <p
+                    className="text-xs mt-0.5 leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: exp.description || "Job description",
+                    }}
+                  ></p>
+                </div>
+              ))
+            ) : (
+              <p className="text-xs italic">No work experience added</p>
+            )}
+          </div>
         </div>
 
         {/* Education - Ensure this section stays together */}
-        <div
-          className="mb-4"
-          style={{
-            breakInside: "avoid",
-            pageBreakInside: "avoid",
-            pageBreakBefore: "auto",
-            pageBreakAfter: "auto",
-          }}
-        >
+        <div className="mb-4 keep-together">
           <h2 className="text-base font-semibold border-b pb-1 mb-1">
             Education
           </h2>
           {education.length > 0 ? (
             education.map((edu: any, index: number) => (
-              <div
-                key={index}
-                className="mb-3"
-                style={{ breakInside: "avoid" }}
-              >
+              <div key={index} className="mb-3">
                 <div className="flex justify-between items-start">
                   <h3 className="text-sm font-medium">
                     {edu.institution || "Institution"}
@@ -169,15 +160,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
 
         {/* Skills */}
-        <div
-          className="mb-4"
-          style={{
-            breakInside: "avoid",
-            pageBreakInside: "avoid",
-            pageBreakBefore: "auto",
-            pageBreakAfter: "auto",
-          }}
-        >
+        <div className="mb-4 keep-together">
           <h2 className="text-base font-semibold border-b pb-1 mb-1">Skills</h2>
           {skills.length > 0 && skills[0] !== "" ? (
             <div className="flex flex-wrap gap-1.5">
@@ -199,41 +182,19 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         {customSections.length > 0 &&
           customSections.map((section: any, index: number) =>
             section.title && section.content ? (
-              <div
-                key={index}
-                className="mb-4"
-                style={{
-                  breakInside: "avoid",
-                  pageBreakInside: "avoid",
-                  pageBreakBefore: "auto",
-                  pageBreakAfter: "auto",
-                }}
-              >
+              <div key={index} className="mb-4 keep-together">
                 <h2 className="text-base font-semibold border-b pb-1 mb-1">
                   {section.title}
                 </h2>
-                <p className="text-xs whitespace-pre-line leading-normal">
-                  {section.content}
-                </p>
+                <p
+                  className="text-xs leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: section.content }}
+                ></p>
               </div>
             ) : null,
           )}
 
-        {/* References Section - Always keep together */}
-        <div
-          className="mb-4"
-          style={{
-            breakInside: "avoid",
-            pageBreakInside: "avoid",
-            pageBreakBefore: "auto",
-            pageBreakAfter: "auto",
-          }}
-        >
-          <h2 className="text-base font-semibold border-b pb-1 mb-1">
-            References
-          </h2>
-          <p className="text-xs italic">Available upon request</p>
-        </div>
+        {/* No fixed References section - it should be added as a custom section if needed */}
       </div>
     </div>
   );

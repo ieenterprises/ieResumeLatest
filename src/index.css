@@ -3,44 +3,32 @@
 @tailwind utilities;
 
 @media print {
-  /* Force all content to flow continuously without breaks */
-  * {
-    page-break-inside: auto !important;
-    break-inside: auto !important;
-    page-break-before: auto !important;
-    break-before: auto !important;
-    page-break-after: auto !important;
-    break-after: auto !important;
-  }
-
-  /* Ensure smooth flow between all elements */
-  .experience-item,
-  .position-header,
-  .entry-item,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  div,
-  p,
-  section {
-    page-break-inside: auto !important;
-    break-inside: auto !important;
-  }
-
-  /* Setup generous page margins */
+  /* Setup exact margins as specified (1.27 cm) */
   @page {
-    margin: 1cm;
+    margin: 1.27cm;
     size: letter portrait;
+  }
+
+  /* Keep sections together */
+  .keep-together {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Ensure headings stay with their content */
+  h2,
+  h3 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 }
 
 /* PDF generation styles */
-.pdf-generation .mb-4,
-.pdf-generation .mb-5,
-.pdf-generation .mb-6 {
+.pdf-generation {
+  line-height: 1.6 !important;
+}
+
+.pdf-generation .keep-together {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
 }
@@ -56,6 +44,13 @@
 .pdf-generation p {
   orphans: 3 !important;
   widows: 3 !important;
+}
+
+/* Keep Professional Summary and Work Experience together */
+.pdf-generation .keep-together {
+  display: block;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 @media print {
@@ -136,5 +131,39 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Rich text editor styles */
+  [contenteditable] {
+    outline: none;
+  }
+
+  [contenteditable][placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+
+  /* Styles for rich text content in PDF */
+  .pdf-generation ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin: 0.5em 0;
+  }
+
+  .pdf-generation ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin: 0.5em 0;
+  }
+
+  .pdf-generation b,
+  .pdf-generation strong {
+    font-weight: bold;
+  }
+
+  .pdf-generation i,
+  .pdf-generation em {
+    font-style: italic;
   }
 }

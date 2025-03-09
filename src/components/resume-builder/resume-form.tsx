@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import {
+  generateResumeSummary,
+  generateJobDescription,
+  generateCustomSectionContent,
+} from "@/lib/gemini-ai";
 import {
   Select,
   SelectContent,
@@ -420,13 +426,51 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
 
                 <div className="space-y-2">
                   <Label htmlFor="summary">Professional Summary</Label>
-                  <Textarea
-                    id="summary"
-                    name="summary"
+                  <RichTextEditor
                     value={personalInfo.summary}
-                    onChange={handlePersonalInfoChange}
+                    onChange={(value) => {
+                      setPersonalInfo((prev) => ({ ...prev, summary: value }));
+                      updateResumeData(
+                        { ...personalInfo, summary: value },
+                        experiences,
+                        education,
+                        skills,
+                        customSections,
+                        template,
+                      );
+                    }}
                     placeholder="Brief overview of your professional background and goals"
                     rows={4}
+                    onAiSuggestion={async () => {
+                      try {
+                        const skillsText = skills.join(", ");
+                        const expText = experiences
+                          .map((e) => `${e.position} at ${e.company}`)
+                          .join(", ");
+                        const aiContent = await generateResumeSummary(
+                          expText,
+                          skillsText,
+                        );
+
+                        setPersonalInfo((prev) => ({
+                          ...prev,
+                          summary: aiContent,
+                        }));
+                        updateResumeData(
+                          { ...personalInfo, summary: aiContent },
+                          experiences,
+                          education,
+                          skills,
+                          customSections,
+                          template,
+                        );
+                      } catch (error) {
+                        console.error("Error generating AI content:", error);
+                        alert(
+                          "Failed to generate AI content. Please try again.",
+                        );
+                      }
+                    }}
                   />
                 </div>
               </div>
@@ -517,17 +561,41 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
 
                     <div className="space-y-2">
                       <Label>Description</Label>
-                      <Textarea
+                      <RichTextEditor
                         value={exp.description}
-                        onChange={(e) =>
-                          handleExperienceChange(
-                            index,
-                            "description",
-                            e.target.value,
-                          )
+                        onChange={(value) =>
+                          handleExperienceChange(index, "description", value)
                         }
                         placeholder="Describe your responsibilities and achievements"
                         rows={3}
+                        onAiSuggestion={async () => {
+                          try {
+                            const position = exp.position || "Position";
+                            const company = exp.company || "Company";
+                            const responsibilities =
+                              "Responsible for key projects and initiatives";
+
+                            const aiContent = await generateJobDescription(
+                              position,
+                              company,
+                              responsibilities,
+                            );
+
+                            handleExperienceChange(
+                              index,
+                              "description",
+                              aiContent,
+                            );
+                          } catch (error) {
+                            console.error(
+                              "Error generating AI content:",
+                              error,
+                            );
+                            alert(
+                              "Failed to generate AI content. Please try again.",
+                            );
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -716,17 +784,41 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
 
                     <div className="space-y-2">
                       <Label>Content</Label>
-                      <Textarea
+                      <RichTextEditor
                         value={section.content}
-                        onChange={(e) =>
-                          handleCustomSectionChange(
-                            index,
-                            "content",
-                            e.target.value,
-                          )
+                        onChange={(value) =>
+                          handleCustomSectionChange(index, "content", value)
                         }
                         placeholder="Add the content for this section"
                         rows={4}
+                        onAiSuggestion={async () => {
+                          try {
+                            const sectionTitle =
+                              section.title || "Custom Section";
+                            const context =
+                              "Include relevant information for this section based on the title";
+
+                            const aiContent =
+                              await generateCustomSectionContent(
+                                sectionTitle,
+                                context,
+                              );
+
+                            handleCustomSectionChange(
+                              index,
+                              "content",
+                              aiContent,
+                            );
+                          } catch (error) {
+                            console.error(
+                              "Error generating AI content:",
+                              error,
+                            );
+                            alert(
+                              "Failed to generate AI content. Please try again.",
+                            );
+                          }
+                        }}
                       />
                     </div>
                   </div>
@@ -745,16 +837,6 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      <div className="pt-4">
-        <Button
-          onClick={generateAIContent}
-          className="w-full bg-purple-600 hover:bg-purple-700"
-        >
-          <Wand2 className="h-4 w-4 mr-2" />
-          Generate AI Content
-        </Button>
-      </div>
     </div>
   );
 }
