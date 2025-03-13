@@ -31,11 +31,17 @@ export function CoverLetterPreview({
     }
   };
 
-  const today = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const displayDate = personalInfo.date
+    ? new Date(personalInfo.date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
   return (
     <div className="space-y-4">
@@ -62,7 +68,7 @@ export function CoverLetterPreview({
               {personalInfo.email || "your.email@example.com"}
             </p>
             <p className="text-xs">{personalInfo.phone || "(123) 456-7890"}</p>
-            <p className="text-xs">{today}</p>
+            <p className="text-xs">{displayDate}</p>
           </div>
 
           {jobDetails.hiringManager || jobDetails.company ? (

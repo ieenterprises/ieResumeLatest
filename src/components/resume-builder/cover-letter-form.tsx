@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { SimpleEditor } from "@/components/ui/simple-editor";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   generateCoverLetterIntroduction,
@@ -34,6 +36,7 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
     email: "",
     phone: "",
     address: "",
+    date: "",
   });
 
   const [jobDetails, setJobDetails] = useState({
@@ -107,9 +110,57 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
     });
   };
 
-  const generateAIContent = () => {
-    // This would connect to an AI service in a real implementation
-    alert("AI content generation would be implemented here");
+  const generateAIContent = async () => {
+    try {
+      // Generate introduction
+      const position = jobDetails.position || "[Position]";
+      const company = jobDetails.company || "[Company]";
+      const experience = "5+ years of relevant experience in the field";
+
+      const introContent = await generateCoverLetterIntroduction(
+        position,
+        company,
+        experience,
+      );
+
+      // Generate body
+      const skills = "communication, teamwork, problem-solving, leadership";
+      const achievements =
+        "increased team productivity by 20%, successfully completed projects under budget";
+
+      const bodyContent = await generateCoverLetterBody(
+        position,
+        skills,
+        achievements,
+      );
+
+      // Generate conclusion
+      const conclusionContent = await generateCoverLetterConclusion(
+        company,
+        position,
+      );
+
+      // Update letter content
+      const newLetterContent = {
+        ...letterContent,
+        introduction: introContent,
+        body: bodyContent,
+        conclusion: conclusionContent,
+      };
+
+      setLetterContent(newLetterContent);
+      updateCoverLetterData(
+        personalInfo,
+        jobDetails,
+        newLetterContent,
+        template,
+      );
+
+      alert("AI content generated successfully!");
+    } catch (error) {
+      console.error("Error generating AI content:", error);
+      alert("Failed to generate AI content. Please try again.");
+    }
   };
 
   return (
@@ -181,6 +232,33 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
                     value={personalInfo.address}
                     onChange={handlePersonalInfoChange}
                     placeholder="123 Main St, City, State"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="date">Date</Label>
+                  <DatePicker
+                    value={
+                      personalInfo.date
+                        ? new Date(personalInfo.date)
+                        : undefined
+                    }
+                    onChange={(date) => {
+                      setPersonalInfo((prev) => ({
+                        ...prev,
+                        date: date ? date.toISOString() : "",
+                      }));
+                      updateCoverLetterData(
+                        {
+                          ...personalInfo,
+                          date: date ? date.toISOString() : "",
+                        },
+                        jobDetails,
+                        letterContent,
+                        template,
+                      );
+                    }}
+                    placeholder="Select date"
                   />
                 </div>
               </div>
@@ -262,8 +340,51 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="introduction">Introduction</Label>
-                  <RichTextEditor
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="introduction">Introduction</Label>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          const position = jobDetails.position || "[Position]";
+                          const company = jobDetails.company || "[Company]";
+                          const experience =
+                            "5+ years of relevant experience in the field";
+                          // Add loading state
+                          setLetterContent((prev) => ({
+                            ...prev,
+                            introduction: "Generating AI content...",
+                          }));
+                          const introContent =
+                            await generateCoverLetterIntroduction(
+                              position,
+                              company,
+                              experience,
+                            );
+                          setLetterContent((prev) => ({
+                            ...prev,
+                            introduction: introContent,
+                          }));
+                          updateCoverLetterData(
+                            personalInfo,
+                            jobDetails,
+                            { ...letterContent, introduction: introContent },
+                            template,
+                          );
+                        } catch (error) {
+                          console.error("Error generating AI content:", error);
+                          alert(
+                            "Failed to generate AI content. Please try again.",
+                          );
+                        }
+                      }}
+                    >
+                      <Wand2 className="h-4 w-4 mr-1" />
+                      Generate with AI
+                    </Button>
+                  </div>
+                  <SimpleEditor
                     value={letterContent.introduction}
                     onChange={(value) => {
                       setLetterContent((prev) => ({
@@ -279,42 +400,55 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
                     }}
                     placeholder="I am writing to express my interest in the [Position] role at [Company]."
                     rows={3}
-                    onAiSuggestion={async () => {
-                      try {
-                        const position = jobDetails.position || "[Position]";
-                        const company = jobDetails.company || "[Company]";
-                        const experience =
-                          "5+ years of relevant experience in the field";
-
-                        const aiContent = await generateCoverLetterIntroduction(
-                          position,
-                          company,
-                          experience,
-                        );
-
-                        setLetterContent((prev) => ({
-                          ...prev,
-                          introduction: aiContent,
-                        }));
-                        updateCoverLetterData(
-                          personalInfo,
-                          jobDetails,
-                          { ...letterContent, introduction: aiContent },
-                          template,
-                        );
-                      } catch (error) {
-                        console.error("Error generating AI content:", error);
-                        alert(
-                          "Failed to generate AI content. Please try again.",
-                        );
-                      }
-                    }}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="body">Body</Label>
-                  <RichTextEditor
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="body">Body</Label>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          const position = jobDetails.position || "[Position]";
+                          const skills =
+                            "communication, teamwork, problem-solving, leadership";
+                          const achievements =
+                            "increased team productivity by 20%, successfully completed projects under budget";
+                          // Add loading state
+                          setLetterContent((prev) => ({
+                            ...prev,
+                            body: "Generating AI content...",
+                          }));
+                          const bodyContent = await generateCoverLetterBody(
+                            position,
+                            skills,
+                            achievements,
+                          );
+                          setLetterContent((prev) => ({
+                            ...prev,
+                            body: bodyContent,
+                          }));
+                          updateCoverLetterData(
+                            personalInfo,
+                            jobDetails,
+                            { ...letterContent, body: bodyContent },
+                            template,
+                          );
+                        } catch (error) {
+                          console.error("Error generating AI content:", error);
+                          alert(
+                            "Failed to generate AI content. Please try again.",
+                          );
+                        }
+                      }}
+                    >
+                      <Wand2 className="h-4 w-4 mr-1" />
+                      Generate with AI
+                    </Button>
+                  </div>
+                  <SimpleEditor
                     value={letterContent.body}
                     onChange={(value) => {
                       setLetterContent((prev) => ({ ...prev, body: value }));
@@ -327,43 +461,52 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
                     }}
                     placeholder="Describe your relevant experience and why you're a good fit for the position."
                     rows={6}
-                    onAiSuggestion={async () => {
-                      try {
-                        const position = jobDetails.position || "[Position]";
-                        const skills =
-                          "communication, teamwork, problem-solving, leadership";
-                        const achievements =
-                          "increased team productivity by 20%, successfully completed projects under budget";
-
-                        const aiContent = await generateCoverLetterBody(
-                          position,
-                          skills,
-                          achievements,
-                        );
-
-                        setLetterContent((prev) => ({
-                          ...prev,
-                          body: aiContent,
-                        }));
-                        updateCoverLetterData(
-                          personalInfo,
-                          jobDetails,
-                          { ...letterContent, body: aiContent },
-                          template,
-                        );
-                      } catch (error) {
-                        console.error("Error generating AI content:", error);
-                        alert(
-                          "Failed to generate AI content. Please try again.",
-                        );
-                      }
-                    }}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="conclusion">Conclusion</Label>
-                  <RichTextEditor
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="conclusion">Conclusion</Label>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          const company = jobDetails.company || "[Company]";
+                          const position = jobDetails.position || "[Position]";
+                          // Add loading state
+                          setLetterContent((prev) => ({
+                            ...prev,
+                            conclusion: "Generating AI content...",
+                          }));
+                          const conclusionContent =
+                            await generateCoverLetterConclusion(
+                              company,
+                              position,
+                            );
+                          setLetterContent((prev) => ({
+                            ...prev,
+                            conclusion: conclusionContent,
+                          }));
+                          updateCoverLetterData(
+                            personalInfo,
+                            jobDetails,
+                            { ...letterContent, conclusion: conclusionContent },
+                            template,
+                          );
+                        } catch (error) {
+                          console.error("Error generating AI content:", error);
+                          alert(
+                            "Failed to generate AI content. Please try again.",
+                          );
+                        }
+                      }}
+                    >
+                      <Wand2 className="h-4 w-4 mr-1" />
+                      Generate with AI
+                    </Button>
+                  </div>
+                  <SimpleEditor
                     value={letterContent.conclusion}
                     onChange={(value) => {
                       setLetterContent((prev) => ({
@@ -379,33 +522,6 @@ export function CoverLetterForm({ setCoverLetterData }: CoverLetterFormProps) {
                     }}
                     placeholder="Thank you for considering my application. I look forward to the opportunity to discuss how I can contribute to your team."
                     rows={3}
-                    onAiSuggestion={async () => {
-                      try {
-                        const position = jobDetails.position || "[Position]";
-                        const company = jobDetails.company || "[Company]";
-
-                        const aiContent = await generateCoverLetterConclusion(
-                          company,
-                          position,
-                        );
-
-                        setLetterContent((prev) => ({
-                          ...prev,
-                          conclusion: aiContent,
-                        }));
-                        updateCoverLetterData(
-                          personalInfo,
-                          jobDetails,
-                          { ...letterContent, conclusion: aiContent },
-                          template,
-                        );
-                      } catch (error) {
-                        console.error("Error generating AI content:", error);
-                        alert(
-                          "Failed to generate AI content. Please try again.",
-                        );
-                      }
-                    }}
                   />
                 </div>
 

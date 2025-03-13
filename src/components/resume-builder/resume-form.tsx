@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { SimpleEditor } from "@/components/ui/simple-editor";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   generateResumeSummary,
   generateJobDescription,
@@ -404,18 +406,6 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="dob">Date of Birth</Label>
-                  <Input
-                    id="dob"
-                    name="dob"
-                    type="date"
-                    value={personalInfo.dob || ""}
-                    onChange={handlePersonalInfoChange}
-                    placeholder="MM/DD/YYYY"
-                  />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
@@ -450,8 +440,80 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="summary">Professional Summary</Label>
-                  <RichTextEditor
+                  <Label htmlFor="dob">Date of Birth</Label>
+                  <DatePicker
+                    value={
+                      personalInfo.dob ? new Date(personalInfo.dob) : undefined
+                    }
+                    onChange={(date) => {
+                      setPersonalInfo((prev) => ({
+                        ...prev,
+                        dob: date ? date.toISOString() : "",
+                      }));
+                      updateResumeData(
+                        {
+                          ...personalInfo,
+                          dob: date ? date.toISOString() : "",
+                        },
+                        experiences,
+                        education,
+                        skills,
+                        customSections,
+                        template,
+                      );
+                    }}
+                    placeholder="Select date of birth"
+                    allowYearMonthOnly={true}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="summary">Professional Summary</Label>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          const experience =
+                            personalInfo.title || "professional";
+                          const skillsList =
+                            skills.filter((s) => s.trim()).join(", ") ||
+                            "various skills";
+                          // Add loading state
+                          setPersonalInfo((prev) => ({
+                            ...prev,
+                            summary: "Generating AI content...",
+                          }));
+                          const aiContent = await generateResumeSummary(
+                            experience,
+                            skillsList,
+                          );
+                          setPersonalInfo((prev) => ({
+                            ...prev,
+                            summary: aiContent,
+                          }));
+                          updateResumeData(
+                            { ...personalInfo, summary: aiContent },
+                            experiences,
+                            education,
+                            skills,
+                            customSections,
+                            template,
+                          );
+                        } catch (error) {
+                          console.error("Error generating AI content:", error);
+                          alert(
+                            "Failed to generate AI content. Please try again.",
+                          );
+                        }
+                      }}
+                    >
+                      <Wand2 className="h-4 w-4 mr-1" />
+                      Generate with AI
+                    </Button>
+                  </div>
+                  <SimpleEditor
                     value={personalInfo.summary}
                     onChange={(value) => {
                       setPersonalInfo((prev) => ({ ...prev, summary: value }));
@@ -466,36 +528,6 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
                     }}
                     placeholder="Brief overview of your professional background and goals"
                     rows={4}
-                    onAiSuggestion={async () => {
-                      try {
-                        const skillsText = skills.join(", ");
-                        const expText = experiences
-                          .map((e) => `${e.position} at ${e.company}`)
-                          .join(", ");
-                        const aiContent = await generateResumeSummary(
-                          expText,
-                          skillsText,
-                        );
-
-                        setPersonalInfo((prev) => ({
-                          ...prev,
-                          summary: aiContent,
-                        }));
-                        updateResumeData(
-                          { ...personalInfo, summary: aiContent },
-                          experiences,
-                          education,
-                          skills,
-                          customSections,
-                          template,
-                        );
-                      } catch (error) {
-                        console.error("Error generating AI content:", error);
-                        alert(
-                          "Failed to generate AI content. Please try again.",
-                        );
-                      }
-                    }}
                   />
                 </div>
               </div>
@@ -555,72 +587,120 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Start Date</Label>
-                        <Input
-                          value={exp.startDate}
-                          onChange={(e) =>
+                        <DatePicker
+                          value={
+                            exp.startDate ? new Date(exp.startDate) : undefined
+                          }
+                          onChange={(date) =>
                             handleExperienceChange(
                               index,
                               "startDate",
-                              e.target.value,
+                              date ? date.toISOString() : "",
                             )
                           }
-                          placeholder="MM/YYYY"
+                          placeholder="Select start date"
+                          allowYearMonthOnly={true}
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label>End Date</Label>
-                        <Input
-                          value={exp.endDate}
-                          onChange={(e) =>
-                            handleExperienceChange(
-                              index,
-                              "endDate",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="MM/YYYY or Present"
-                        />
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={`present-${index}`}
+                              checked={exp.endDate === "present"}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  handleExperienceChange(
+                                    index,
+                                    "endDate",
+                                    "present",
+                                  );
+                                } else {
+                                  handleExperienceChange(index, "endDate", "");
+                                }
+                              }}
+                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            />
+                            <label
+                              htmlFor={`present-${index}`}
+                              className="text-sm font-medium text-gray-700"
+                            >
+                              Present / Current
+                            </label>
+                          </div>
+                          {exp.endDate !== "present" && (
+                            <DatePicker
+                              value={
+                                exp.endDate ? new Date(exp.endDate) : undefined
+                              }
+                              onChange={(date) =>
+                                handleExperienceChange(
+                                  index,
+                                  "endDate",
+                                  date ? date.toISOString() : "",
+                                )
+                              }
+                              placeholder="Select end date"
+                              allowYearMonthOnly={true}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Description</Label>
-                      <RichTextEditor
+                      <div className="flex justify-between items-center">
+                        <Label>Description</Label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            try {
+                              const position = exp.position || "position";
+                              const company = exp.company || "company";
+                              const responsibilities =
+                                "responsibilities and achievements in this role";
+                              // Add loading state
+                              handleExperienceChange(
+                                index,
+                                "description",
+                                "Generating AI content...",
+                              );
+                              const aiContent = await generateJobDescription(
+                                position,
+                                company,
+                                responsibilities,
+                              );
+                              handleExperienceChange(
+                                index,
+                                "description",
+                                aiContent,
+                              );
+                            } catch (error) {
+                              console.error(
+                                "Error generating AI content:",
+                                error,
+                              );
+                              alert(
+                                "Failed to generate AI content. Please try again.",
+                              );
+                            }
+                          }}
+                        >
+                          <Wand2 className="h-4 w-4 mr-1" />
+                          Generate with AI
+                        </Button>
+                      </div>
+                      <SimpleEditor
                         value={exp.description}
                         onChange={(value) =>
                           handleExperienceChange(index, "description", value)
                         }
                         placeholder="Describe your responsibilities and achievements"
                         rows={3}
-                        onAiSuggestion={async () => {
-                          try {
-                            const position = exp.position || "Position";
-                            const company = exp.company || "Company";
-                            const responsibilities =
-                              "Responsible for key projects and initiatives";
-
-                            const aiContent = await generateJobDescription(
-                              position,
-                              company,
-                              responsibilities,
-                            );
-
-                            handleExperienceChange(
-                              index,
-                              "description",
-                              aiContent,
-                            );
-                          } catch (error) {
-                            console.error(
-                              "Error generating AI content:",
-                              error,
-                            );
-                            alert(
-                              "Failed to generate AI content. Please try again.",
-                            );
-                          }
-                        }}
                       />
                     </div>
                   </div>
@@ -708,16 +788,21 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Graduation Date</Label>
-                        <Input
-                          value={edu.graduationDate}
-                          onChange={(e) =>
+                        <DatePicker
+                          value={
+                            edu.graduationDate
+                              ? new Date(edu.graduationDate)
+                              : undefined
+                          }
+                          onChange={(date) =>
                             handleEducationChange(
                               index,
                               "graduationDate",
-                              e.target.value,
+                              date ? date.toISOString() : "",
                             )
                           }
-                          placeholder="MM/YYYY"
+                          placeholder="Select graduation date"
+                          allowYearMonthOnly={true}
                         />
                       </div>
 
@@ -809,41 +894,13 @@ export function ResumeForm({ setResumeData }: ResumeFormProps) {
 
                     <div className="space-y-2">
                       <Label>Content</Label>
-                      <RichTextEditor
+                      <SimpleEditor
                         value={section.content}
                         onChange={(value) =>
                           handleCustomSectionChange(index, "content", value)
                         }
                         placeholder="Add the content for this section"
                         rows={4}
-                        onAiSuggestion={async () => {
-                          try {
-                            const sectionTitle =
-                              section.title || "Custom Section";
-                            const context =
-                              "Include relevant information for this section based on the title";
-
-                            const aiContent =
-                              await generateCustomSectionContent(
-                                sectionTitle,
-                                context,
-                              );
-
-                            handleCustomSectionChange(
-                              index,
-                              "content",
-                              aiContent,
-                            );
-                          } catch (error) {
-                            console.error(
-                              "Error generating AI content:",
-                              error,
-                            );
-                            alert(
-                              "Failed to generate AI content. Please try again.",
-                            );
-                          }
-                        }}
                       />
                     </div>
                   </div>

@@ -24,7 +24,7 @@ interface RichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   rows?: number;
-  onAiSuggestion?: () => void;
+  onAiSuggestion?: () => Promise<void>;
 }
 
 export function RichTextEditor({
@@ -54,6 +54,19 @@ export function RichTextEditor({
   const handleInput = () => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
+    }
+  };
+
+  const handleAiSuggestion = async () => {
+    if (!onAiSuggestion) return;
+
+    try {
+      setIsGeneratingAI(true);
+      await onAiSuggestion();
+    } catch (error) {
+      console.error("Error generating AI content:", error);
+    } finally {
+      setIsGeneratingAI(false);
     }
   };
 
@@ -194,14 +207,7 @@ export function RichTextEditor({
               variant="ghost"
               size="sm"
               className="ml-auto text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-              onClick={async () => {
-                setIsGeneratingAI(true);
-                try {
-                  await onAiSuggestion();
-                } finally {
-                  setIsGeneratingAI(false);
-                }
-              }}
+              onClick={handleAiSuggestion}
               disabled={isGeneratingAI}
             >
               {isGeneratingAI ? (
@@ -222,12 +228,14 @@ export function RichTextEditor({
 
       <div
         ref={editorRef}
-        className="p-3 min-h-[100px]"
+        className="p-3 min-h-[100px] text-left"
         contentEditable
         dangerouslySetInnerHTML={{ __html: value }}
         onPaste={handlePaste}
         onInput={handleInput}
-        style={{ minHeight: `${rows * 1.5}rem` }}
+        style={{
+          minHeight: `${rows * 1.5}rem`,
+        }}
         placeholder={placeholder}
       />
     </div>

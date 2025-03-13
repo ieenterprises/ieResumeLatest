@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+[contenteditable] {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
 @media print {
   /* Setup exact margins as specified (1.27 cm) */
   @page {

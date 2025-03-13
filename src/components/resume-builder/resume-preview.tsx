@@ -76,6 +76,9 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 {personalInfo.email && <p>{personalInfo.email}</p>}
                 {personalInfo.phone && <p>{personalInfo.phone}</p>}
                 {personalInfo.address && <p>{personalInfo.address}</p>}
+                {personalInfo.dob && (
+                  <p>DOB: {new Date(personalInfo.dob).toLocaleDateString()}</p>
+                )}
               </div>
             </div>
           </div>
@@ -113,8 +116,21 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                       {exp.position || "Position"}
                     </h3>
                     <span className="text-xs">
-                      {exp.startDate || "Start Date"} -{" "}
-                      {exp.endDate || "End Date"}
+                      {exp.startDate
+                        ? new Date(exp.startDate).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                          })
+                        : "Start Date"}{" "}
+                      -{" "}
+                      {exp.endDate === "present"
+                        ? "Present"
+                        : exp.endDate
+                          ? new Date(exp.endDate).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                            })
+                          : "End Date"}
                     </span>
                   </div>
                   <p className="text-xs font-medium">
@@ -147,7 +163,12 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                     {edu.institution || "Institution"}
                   </h3>
                   <span className="text-xs">
-                    {edu.graduationDate || "Graduation Date"}
+                    {edu.graduationDate
+                      ? new Date(edu.graduationDate).toLocaleDateString(
+                          "en-US",
+                          { year: "numeric", month: "short" },
+                        )
+                      : "Graduation Date"}
                   </span>
                 </div>
                 <p className="text-xs">

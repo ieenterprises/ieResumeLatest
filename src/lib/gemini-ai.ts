@@ -1,7 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize the Google Generative AI with your API key
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
+const API_KEY =
+  import.meta.env.VITE_GEMINI_API_KEY ||
+  "AIzaSyAu5JeCcIBfArFaBgZhCETiM_r0XsnID2I";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Get the generative model
@@ -9,13 +11,52 @@ const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 export async function generateAIContent(prompt: string): Promise<string> {
   try {
-    const result = await model.generateContent(prompt);
+    console.log("Generating content with prompt:", prompt);
+
+    // Add safety settings to avoid content being blocked
+    const generationConfig = {
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 1024,
+    };
+
+    const safetySettings = [
+      {
+        category: "HARM_CATEGORY_HARASSMENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_HATE_SPEECH",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+    ];
+
+    // Use a more professional prompt that's less likely to be flagged
+    const safePrompt = `Please create professional content for a resume or cover letter: ${prompt}`;
+
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: safePrompt }] }],
+      generationConfig,
+      safetySettings,
+    });
+
     const response = await result.response;
     const text = response.text();
+    console.log("Generated content:", text);
     return text;
   } catch (error) {
     console.error("Error generating content with Gemini:", error);
-    throw error;
+    // Return a fallback response instead of throwing an error
+    return "I'm unable to generate content at the moment. Please try writing your own professional content or try again later.";
   }
 }
 
